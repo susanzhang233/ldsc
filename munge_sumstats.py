@@ -131,15 +131,12 @@ def read_header(fh):
 def get_cname_map(flag, default, ignore):
     '''
     Figure out which column names to use.
-
     Priority is
     (1) ignore everything in ignore
     (2) use everything in flags that is not in ignore
     (3) use everything in default that is not in ignore or in flags
-
     The keys of flag are cleaned. The entries of ignore are not cleaned. The keys of defualt
     are cleaned. But all equality is modulo clean_header().
-
     '''
     clean_ignore = [clean_header(x) for x in ignore]
     cname_map = {x: flag[x] for x in flag if x not in clean_ignore}
@@ -381,7 +378,6 @@ def check_median(x, expected_median, tolerance, name):
 def parse_flag_cnames(log, args):
     '''
     Parse flags that specify how to interpret nonstandard column names.
-
     flag_cnames is a dict that maps (cleaned) arguments to internal column names
     '''
     cname_options = [
@@ -534,7 +530,7 @@ def munge_sumstats(args, p=True):
                 '--no-alleles and --merge-alleles are not compatible.')
         if args.daner and args.daner_n:
             raise ValueError('--daner and --daner-n are not compatible. Use --daner for sample ' + 
-	        'size from FRQ_A/FRQ_U headers, use --daner-n for values from Nca/Nco columns')
+            'size from FRQ_A/FRQ_U headers, use --daner-n for values from Nca/Nco columns')
 
         if p:
             defaults = vars(parser.parse_args(''))
@@ -580,21 +576,21 @@ def munge_sumstats(args, p=True):
 
             cname_map[frq_u] = 'FRQ'
 
-	if args.daner_n:
-	    frq_u = filter(lambda x: x.startswith('FRQ_U_'), file_cnames)[0]
-	    cname_map[frq_u] = 'FRQ'
-	    try:
-	        dan_cas = clean_header(file_cnames[file_cnames.index('Nca')])
-	    except ValueError:
-	        raise ValueError('Could not find Nca column expected for daner-n format')
-	
-	    try:
-	        dan_con = clean_header(file_cnames[file_cnames.index('Nco')])
-	    except ValueError:
-	        raise ValueError('Could not find Nco column expected for daner-n format')
+    if args.daner_n:
+        frq_u = filter(lambda x: x.startswith('FRQ_U_'), file_cnames)[0]
+        cname_map[frq_u] = 'FRQ'
+        try:
+            dan_cas = clean_header(file_cnames[file_cnames.index('Nca')])
+        except ValueError:
+            raise ValueError('Could not find Nca column expected for daner-n format')
+    
+        try:
+            dan_con = clean_header(file_cnames[file_cnames.index('Nco')])
+        except ValueError:
+            raise ValueError('Could not find Nco column expected for daner-n format')
 
             cname_map[dan_cas] = 'N_CAS'
-	    cname_map[dan_con] = 'N_CON'
+        cname_map[dan_con] = 'N_CON'
 
         cname_translation = {x: cname_map[clean_header(x)] for x in file_cnames if
                              clean_header(x) in cname_map}  # note keys not cleaned
